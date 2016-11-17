@@ -8,19 +8,13 @@ def get_input():
 
 def calc(cars):
     aux = []
-    for i in range(len(cars)):
-        aux.append(0)
-
-    for j in range(len(cars)):
+    aux.append(1)
+    for j in range(1, len(cars)):
         len_seq = 0
-        if j == 0:
-            aux[0] = 1
-        else:
-            for k in range(1, j):
-                if cars[j] > cars[k]:
-                    if len_seq < aux[k]:
-                        len_seq = aux[k]
-            aux[j] = len_seq + 1            
+        for k in range(j):
+            if cars[j] > cars[k] and len_seq < aux[k]:
+                len_seq = aux[k]
+        aux.append(len_seq + 1)
 
     print max(aux)
 
