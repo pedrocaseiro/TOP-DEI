@@ -17,29 +17,41 @@ vector<node> nodes;
 vector<int> dfs;
 vector<int> low;
 
+int counter_articulation_points = 0;;
 int t = 0;
 void articulation_points(int i){
-  int j;
+  int j, k;
+  int parent;
+  int flag = 0;
   low[i] = dfs[i] = t = t + 1;
-  for(j = 0; j < nodes[i].edges.size(); j++){
+  for(j = 0; j < (int)nodes[i].edges.size(); j++){
     if(dfs[nodes[i].edges[j]] == -1){
       articulation_points(nodes[i].edges[j]);
       low[i] = min(low[i], low[nodes[i].edges[j]]);
-      if(dfs[i] == 1 && dfs[nodes[i].edges[j]] != 2){
-        printf("articulation\n");
+      if(dfs[i] == 1 && dfs[nodes[i].edges[j]] != 2){ // x a mais
+        if(!flag) counter_articulation_points++;
+        flag = 1;
       }
+
       if(dfs[i] != 1 && low[nodes[i].edges[j]] >= dfs[i]){
-        printf("articulation");
+        if(!flag) counter_articulation_points++;
+        flag = 1;
       }
-    } else if(find(nodes[nodes[i].edges[j]].edges.begin(), nodes[nodes[i].edges[j]].edges.end(), i) == nodes[nodes[i].edges[j]].edges.end()) {
-      low[i] = min(low[i], dfs[nodes[i].edges[j]]);
+    } else {
+      parent = 0;
+      for(k = 0; k < (int)nodes[nodes[i].edges[j]].edges.size(); k++){
+        if(nodes[nodes[i].edges[j]].edges[k] == i){
+          parent = 1;
+        }
+      }
+      if(parent == 0) low[i] = min(low[i], dfs[nodes[i].edges[j]]);
     }
   }
 }
 
 int main() {
   int i, j;
-  int n_nodes, id;
+  int n_nodes, id, start;
   int aux;
   char c;
 
@@ -49,6 +61,7 @@ int main() {
     } else {
       dfs.clear();
       low.clear();
+      counter_articulation_points = 0;
       t = 0;
       nodes.clear();
       for(i = 0; i < n_nodes; i++){
@@ -62,9 +75,11 @@ int main() {
         if(id == 0){
           break;
         } else {
+          start = id;
           for(j = 0; j < n_nodes; i++){
             if(scanf("%d", &aux) == 1){
               nodes[id-1].edges.push_back(aux-1);
+              nodes[aux-1].edges.push_back(id-1);
               scanf("%c", &c);
               if(c == '\n'){
                 break;
@@ -73,7 +88,8 @@ int main() {
           }
         }
       }
-      articulation_points(id - 1);
+      articulation_points(0);
+      printf("%d\n", counter_articulation_points);
     }
   } 
   return 0;
