@@ -15,7 +15,6 @@ int n_bolts;
 vector<node> nodes;
 
 // we use floyd warshall because it gives the shortest path between two points in any graph
-// we use floyd warshall because it gives the shortest path between two points in any graph
 void floyd_warshall(){
   int i, j, k;
   long int matrix[n_bolts+1][n_bolts+1];

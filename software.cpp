@@ -44,7 +44,13 @@ void bdj(int n, vector<int> resolved, vector<int> unresolved){
 }
 
 int stage = 1;
+vector<int> nodes_expanded;
+vector<int> cycles_expanded;
 void stages(int n){
+  if (find(nodes_expanded.begin(), nodes_expanded.end(), n) != nodes_expanded.end()){
+    return;
+  }
+  nodes_expanded.push_back(n);
   int i, j, k, l;
   int aux;
   int cycle_flag = 0;
@@ -52,8 +58,12 @@ void stages(int n){
     cycle_flag = 0;
     aux = nodes[n].edges[i];
     for (j = 0; j < (int) cycles.size(); j++){
-      if(find(cycles[j].begin(), cycles[j].end(), aux) != cycles[i].end()){
+      if(find(cycles_expanded.begin(), cycles_expanded.end(), j) == cycles_expanded.end() && find(cycles[j].begin(), cycles[j].end(), aux) != cycles[i].end()){
+        cycles_expanded.push_back(j);
         cycle_flag = 1;
+        for(k = 0; k < (int) cycles[j].size(); k++){
+          nodes_expanded.push_back(cycles[j][k]);
+        }
         for(k = 0; k < (int) cycles[j].size(); k++){
           for (l = 0; l < (int) nodes[cycles[j][k]].edges.size(); l++){
             if(find(cycles[j].begin(), cycles[j].end(), nodes[cycles[j][k]].edges[l]) == cycles[j].end()){
@@ -70,15 +80,25 @@ void stages(int n){
         }
         printf("\n");
         stage++;
+        break;
       }
     }
     if(!cycle_flag){
       stages(aux);
     }
   }
-  printf("Stage %d:\n", stage);
-  printf("%d\n", n+1);
-  stage++;
+  cycle_flag = 0;
+  for(i = 0; i < (int)cycles.size(); i++){
+    if(find(cycles[i].begin(), cycles[i].end(), n) != cycles[i].end()){
+      cycle_flag = 1;
+      break;
+    }
+  }
+  if(!cycle_flag){
+    printf("Stage %d:\n", stage);
+    printf("%d\n", n+1);
+    stage++;
+  }
 }
 
 int main() {
